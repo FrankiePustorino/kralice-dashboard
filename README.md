@@ -111,8 +111,8 @@ in `.env` (see below) to a fixed list, confirm the paths with `lsblk -d`, and
 grant sudo only for those:
 
 ```
-francesco ALL=(root) NOPASSWD: /usr/sbin/smartctl -a -j /dev/sda
-francesco ALL=(root) NOPASSWD: /usr/sbin/smartctl -a -j /dev/nvme0n1
+user ALL=(root) NOPASSWD: /usr/sbin/smartctl -a -j /dev/sda
+user ALL=(root) NOPASSWD: /usr/sbin/smartctl -a -j /dev/nvme0n1
 ```
 
 **Option B — any disk, unscoped:** `smartctl -a` is read-only (it doesn't
@@ -121,7 +121,7 @@ than the systemctl one above, but it does let the dashboard process read
 SMART data — including serial numbers — from *any* block device on the box:
 
 ```
-francesco ALL=(root) NOPASSWD: /usr/sbin/smartctl *
+user ALL=(root) NOPASSWD: /usr/sbin/smartctl *
 ```
 
 Confirm the exact path with `which smartctl` first (`/usr/sbin/smartctl` on
