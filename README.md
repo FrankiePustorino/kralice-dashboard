@@ -65,12 +65,12 @@ Run `sudo visudo -f /etc/sudoers.d/kralice-dashboard` and add
 (replace `francesco` with whatever user runs the dashboard process):
 
 ```
-francesco ALL=(root) NOPASSWD: /usr/bin/systemctl restart radarr
-francesco ALL=(root) NOPASSWD: /usr/bin/systemctl stop radarr
-francesco ALL=(root) NOPASSWD: /usr/bin/systemctl start radarr
-francesco ALL=(root) NOPASSWD: /usr/bin/systemctl restart sonarr
-francesco ALL=(root) NOPASSWD: /usr/bin/systemctl stop sonarr
-francesco ALL=(root) NOPASSWD: /usr/bin/systemctl start sonarr
+user ALL=(root) NOPASSWD: /usr/bin/systemctl restart radarr
+user ALL=(root) NOPASSWD: /usr/bin/systemctl stop radarr
+user ALL=(root) NOPASSWD: /usr/bin/systemctl start radarr
+user ALL=(root) NOPASSWD: /usr/bin/systemctl restart sonarr
+user ALL=(root) NOPASSWD: /usr/bin/systemctl stop sonarr
+user ALL=(root) NOPASSWD: /usr/bin/systemctl start sonarr
 ```
 
 Confirm the exact path to `systemctl` first with `which systemctl` — it's
