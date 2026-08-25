@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kralice Dashboard</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="statusbar" id="statusbar">
+    <span class="brand">kralice@dashboard</span>
+    <span class="item"><span class="dot" id="dot-bot"></span><span class="label">kralice-bot</span></span>
+    <span class="item"><span class="dot" id="dot-docker"></span><span class="label">docker</span></span>
+    <span class="item"><span class="dot" id="dot-radarr"></span><span class="label">radarr</span></span>
+    <span class="item"><span class="dot" id="dot-sonarr"></span><span class="label">sonarr</span></span>
+    <span class="spacer"></span>
+    <button class="token-btn" id="tokenBtn">set token</button>
+</div>
+
+<div class="app">
+    <nav class="nav">
+        <button class="nav-btn active" data-view="bot">Bot</button>
+        <button class="nav-btn" data-view="system">System</button>
+        <button class="nav-btn" data-view="storage">Storage</button>
+        <button class="nav-btn" data-view="pm2">PM2</button>
+        <button class="nav-btn" data-view="docker">Docker</button>
+        <button class="nav-btn" data-view="arr">Radarr / Sonarr</button>
+        <button class="nav-btn" data-view="errors">Error Log</button>
+    </nav>
+
+    <main class="main">
+
+        <!-- ══════════ BOT ══════════ -->
+        <section class="view active" id="view-bot">
+            <h1>Kralice Bot</h1>
+            <p class="subtitle">Same data files the Telegram bot reads and writes — changes here show up there too.</p>
+
+            <div class="subtabs">
+                <button class="sub-btn active" data-sub="shopping">Shopping</button>
+                <button class="sub-btn" data-sub="todos">To-Do</button>
+                <button class="sub-btn" data-sub="reminders">Reminders</button>
+                <button class="sub-btn" data-sub="polls">Polls</button>
+                <button class="sub-btn" data-sub="weather">Weather</button>
+            </div>
+
+            <div class="subview active" id="sub-shopping">
+                <div class="card">
+                    <div class="row">
+                        <input type="text" id="shopChatId" placeholder="chat id (blank = default)" style="width:200px">
+                        <input type="text" id="shopItem" placeholder="Add an item…" style="flex:1; min-width:180px">
+                        <button class="btn primary" id="shopAddBtn">Add</button>
+                        <button class="btn" id="shopClearCheckedBtn">Clear checked</button>
+                        <button class="btn danger" id="shopClearBtn">Clear all</button>
+                    </div>
+                </div>
+                <div class="card" id="shopListCard"><div class="empty">Loading…</div></div>
+            </div>
+
+            <div class="subview" id="sub-todos">
+                <div class="card">
+                    <div class="row">
+                        <input type="text" id="todoText" placeholder="New task…" style="flex:1; min-width:200px">
+                        <select id="todoPriority">
+                            <option value="high">high</option>
+                            <option value="medium" selected>medium</option>
+                            <option value="low">low</option>
+                        </select>
+                        <button class="btn primary" id="todoAddBtn">Add</button>
+                        <button class="btn" id="todoClearDoneBtn">Clear done</button>
+                    </div>
+                </div>
+                <div class="card" id="todoListCard"><div class="empty">Loading…</div></div>
+            </div>
+
+            <div class="subview" id="sub-reminders">
+                <p class="section-note">Toggling or deleting a reminder here edits reminders.json, but the bot only re-arms its cron jobs on restart — use the PM2 tab afterward.</p>
+                <div class="card" id="reminderListCard"><div class="empty">Loading…</div></div>
+            </div>
+
+            <div class="subview" id="sub-polls">
+                <div class="card" id="pollListCard"><div class="empty">Loading…</div></div>
+            </div>
+
+            <div class="subview" id="sub-weather">
+                <div class="card">
+                    <div class="row">
+                        <input type="text" id="weatherCity" placeholder="City (blank = home location)" style="flex:1; min-width:200px">
+                        <select id="weatherLang"><option value="en">EN</option><option value="it">IT</option></select>
+                        <button class="btn primary" id="weatherBtn">Check</button>
+                    </div>
+                </div>
+                <div class="card" id="weatherResultCard"></div>
+            </div>
+        </section>
+
+        <!-- ══════════ SYSTEM ══════════ -->
+        <section class="view" id="view-system">
+            <h1>System Resources</h1>
+            <p class="subtitle" id="systemUpdatedLine">Loading…</p>
+
+            <h2>CPU</h2>
+            <div class="card" id="cpuCard"><div class="empty">Loading…</div></div>
+
+            <h2>Memory</h2>
+            <div class="card" id="memCard"><div class="empty">Loading…</div></div>
+
+            <h2>Storage</h2>
+            <div class="card" id="diskCard"><div class="empty">Loading…</div></div>
+
+            <h2>GPU</h2>
+            <div class="card" id="gpuCard"><div class="empty">Loading…</div></div>
+        </section>
+
+        <!-- ══════════ STORAGE (SMART / disk health) ══════════ -->
+        <section class="view" id="view-storage">
+            <h1>Storage Health</h1>
+            <p class="subtitle" id="storageUpdatedLine">Per-disk SMART data — model, physical location, power-on time, and wear (TBW for SSDs, sector health for HDDs).</p>
+            <div class="row" style="margin-bottom:16px">
+                <button class="btn primary" id="storageRefreshBtn">Refresh</button>
+            </div>
+            <div id="storageContainer"><div class="empty">Loading…</div></div>
+        </section>
+
+        <!-- ══════════ PM2 ══════════ -->
+        <section class="view" id="view-pm2">
+            <h1>PM2 Processes</h1>
+            <p class="subtitle">Controls the kralice-bot process (and anything else PM2 manages on this host).</p>
+            <div class="card" id="pm2TableCard"><div class="empty">Loading…</div></div>
+
+            <h2>Logs</h2>
+            <div class="row" style="margin-bottom:10px">
+                <select id="pm2LogType">
+                    <option value="both">out + error</option>
+                    <option value="error">error only</option>
+                    <option value="out">out only</option>
+                </select>
+                <button class="btn" id="pm2LogRefreshBtn">Refresh logs</button>
+            </div>
+            <div class="log-box" id="pm2LogBox">—</div>
+        </section>
+
+        <!-- ══════════ DOCKER ══════════ -->
+        <section class="view" id="view-docker">
+            <h1>Docker</h1>
+            <p class="subtitle" id="dockerInfoLine">Loading daemon info…</p>
+            <div class="card" id="dockerTableCard"><div class="empty">Loading…</div></div>
+
+            <h2>Container logs</h2>
+            <div class="row" style="margin-bottom:10px">
+                <select id="dockerLogContainer"><option value="">Select a container…</option></select>
+                <button class="btn" id="dockerLogRefreshBtn">Refresh logs</button>
+            </div>
+            <div class="log-box" id="dockerLogBox">—</div>
+        </section>
+
+        <!-- ══════════ RADARR / SONARR ══════════ -->
+        <section class="view" id="view-arr">
+            <h1>Radarr &amp; Sonarr</h1>
+            <p class="subtitle">systemd services — restart/stop require passwordless sudo scoped to these two units (see README).</p>
+            <div class="card" id="arrCard"><div class="empty">Loading…</div></div>
+
+            <h2>Logs</h2>
+            <div class="row" style="margin-bottom:10px">
+                <select id="arrLogService"><option value="radarr">radarr</option><option value="sonarr">sonarr</option></select>
+                <button class="btn" id="arrLogRefreshBtn">Refresh logs</button>
+            </div>
+            <div class="log-box" id="arrLogBox">—</div>
+        </section>
+
+        <!-- ══════════ ERROR LOG ══════════ -->
+        <section class="view" id="view-errors">
+            <h1>Error Log</h1>
+            <p class="subtitle">Recent error-looking lines from PM2, every running Docker container, and each systemd service — grouped by source, not merged into one timeline (log formats differ too much to sort reliably).</p>
+            <div class="row" style="margin-bottom:16px">
+                <button class="btn primary" id="errorsRefreshBtn">Refresh</button>
+                <span class="subtitle" id="errorsGeneratedAt" style="margin:0"></span>
+            </div>
+            <div id="errorsContainer"><div class="empty">Loading…</div></div>
+        </section>
+
+    </main>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,19 @@
+{
+  "name": "kralice-dashboard",
+  "version": "1.0.0",
+  "description": "Ops dashboard for the Kralice bot, PM2, Docker, and Radarr/Sonarr on kraliceserver",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dockerode": "^4.0.2",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
